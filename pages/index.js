@@ -6,11 +6,10 @@ import CodeBlock from "~/components/CodeBlock";
 import { css } from "@emotion/react";
 import { ButtonPrimary } from "~/components/Buttons";
 import { Input } from "~/components/Input";
-import { H1, H2, H3, P1 } from "~/components/Typography";
 
 const BACKGROUND_IMAGE =
   "https://slate.textile.io/ipfs/bafybeiddgkvf5ta6y5b7wamrxl33mtst4detegleblw4gfduhwm3sdwdra";
-const API_KEY = "SLA8b6062b0-7708-4563-9520-39f40401c011TE";
+const API_KEY = "PUT-YOUR-API-KEY-HERE";
 
 const STYLES_BACKGROUND = css`
   background-image: url(${BACKGROUND_IMAGE});
@@ -69,7 +68,9 @@ class UploadExample extends React.Component {
   };
 
   _handleUpload = async (e) => {
-    const url = `https://uploads.slate.host/api/public`;
+    const url = `https://uploads.slate.host/api/public${
+      this.state.slateId ? `/${this.state.slateId}` : ""
+    }`;
     const files = e.target.files;
     for (let file of files) {
       let data = new FormData();
@@ -154,8 +155,7 @@ class UpdateExample extends React.Component {
   };
 
   _handleFetch = async (e) => {
-    const url = "https://slate.host/api/v2/get";
-
+    const url = `https://uploads.slate.host/api/v2/public/upload-by-url`;
     try {
       const response = await fetch(url, {
         method: "POST",
@@ -163,13 +163,17 @@ class UpdateExample extends React.Component {
           "Content-Type": "application/json",
           Authorization: API_KEY,
         },
+        body: JSON.stringify({
+          data: {
+            url:
+              "https://www.cdc.gov/healthypets/images/pets/cute-dog-headshot.jpg",
+            filename: "Doggo",
+          },
+        }),
       });
+      console.log(response);
       const json = await response.json();
       console.log(json);
-      const user = json.user;
-      const library = user.library;
-      const lastFile = library[0];
-      this.setState({ file: lastFile });
     } catch (e) {
       console.log(e);
     }
